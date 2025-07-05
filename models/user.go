@@ -13,5 +13,5 @@ type User struct {
     PasswordHash string         `gorm:"type:varchar(255);not null"`
     CreatedAt    time.Time      `gorm:"autoCreateTime"`
     UpdatedAt    time.Time      `gorm:"autoUpdateTime"`
-    DeletedAt    gorm.DeletedAt `gorm:"index"` // soft delete opsional
+    DeletedAt    gorm.DeletedAt `gorm:"index"` // soft delete
 }
