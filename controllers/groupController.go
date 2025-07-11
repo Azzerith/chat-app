@@ -54,13 +54,24 @@ func (gc *GroupController) CreateGroup(c *gin.Context) {
 
 // GetGroups (GET /api/groups)
 func (gc *GroupController) GetGroups(c *gin.Context) {
-	var groups []models.ChatGroup
-	if err := gc.DB.Preload("Members").Find(&groups).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-	c.JSON(http.StatusOK, groups)
+    var groups []models.ChatGroup
+    if err := gc.DB.
+        Preload("Members").
+        Preload("Members.User").
+        Find(&groups).Error; err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+        return
+    }
+
+    for gi := range groups {
+        for mi := range groups[gi].Members {
+            groups[gi].Members[mi].User.Password = ""
+        }
+    }
+
+    c.JSON(http.StatusOK, groups)
 }
+
 
 // JoinGroup (POST /api/groups/:id/join)
 func (gc *GroupController) JoinGroup(c *gin.Context) {

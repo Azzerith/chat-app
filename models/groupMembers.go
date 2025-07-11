@@ -13,5 +13,4 @@ type GroupMember struct {
     DeletedAt gorm.DeletedAt `gorm:"index"`
 
     User  User      `gorm:"foreignKey:UserID"`
-    Group ChatGroup `gorm:"foreignKey:GroupID"`
 }
