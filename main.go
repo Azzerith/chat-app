@@ -5,40 +5,45 @@ import (
 	"log"
 	"os"
 
+	"github.com/gin-gonic/gin"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 
-	"github.com/gin-gonic/gin"
-
 	"chat-app/models"
+	"chat-app/routes"
 )
 
 func main() {
-	// Konfigurasi koneksi database
+	// 1. Koneksi DB
 	dsn := getDSN()
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Fatalf("Gagal konek ke database: %v", err)
 	}
 
-	// Auto migrate tabel
-	err = db.AutoMigrate(
+	// 2. Auto‑migrate
+	if err := db.AutoMigrate(
 		&models.User{},
 		&models.ChatGroup{},
 		&models.GroupMember{},
 		&models.Message{},
 		&models.MessageStatus{},
-	)
-	if err != nil {
+	); err != nil {
 		log.Fatalf("Gagal migrate tabel: %v", err)
 	}
+	fmt.Println("Database terkoneksi & migrasi selesai.")
 
-	fmt.Println("Database berhasil terkoneksi dan migrasi selesai.")
-
-	// Setup Gin
+	// 3. Setup Gin & routes
 	router := gin.Default()
+	routes.RegisterRoutes(router, db)
+	router.GET("/healthcheck", func(c *gin.Context) {
+		c.JSON(200, gin.H{"status": "ok"})
+	})
 
-	router.Run()
+	// 4. Jalankan server
+	if err := router.Run(":8080"); err != nil {
+		log.Fatalf("Gagal start server: %v", err)
+	}
 }
 
 func getDSN() string {

@@ -182,7 +182,20 @@ func (uc *UserController) Login(c *gin.Context) {
         return
     }
 
-    c.JSON(http.StatusOK, gin.H{"access_token": token, "token_type": "bearer", "expires_in": 86400})
+    user.Password = ""
+
+    c.JSON(http.StatusOK, gin.H{
+        "access_token": token,
+        "token_type":   "bearer",
+        "expires_in":   86400,
+        "user": gin.H{
+            "id":        user.ID,
+            "username":  user.Username,
+            "email":     user.Email,
+            "is_online": user.IsOnline,
+            "last_seen": user.LastSeen,
+        },
+    })
 }
 
 // Logout (POST /api/logout)
