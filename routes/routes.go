@@ -10,6 +10,8 @@ import (
 func RegisterRoutes(r *gin.Engine, db *gorm.DB) {
     uc := controllers.NewUserController(db)
 	gc := controllers.NewGroupController(db)
+	mc := controllers.NewMessageController(db)
+
 
     // public endpoints
     r.POST("/api/register", uc.Register)
@@ -29,5 +31,10 @@ func RegisterRoutes(r *gin.Engine, db *gorm.DB) {
         api.POST("/groups/:id/join", gc.JoinGroup)
         api.POST("/groups/:id/leave", gc.LeaveGroup)
         api.DELETE("/groups/:id", gc.DeleteGroup)// delete group (creator only)
+
+		api.POST("/messages", mc.SendMessage)
+		api.GET("/messages", mc.GetMessages)
+		api.POST("/messages/:id/read", mc.MarkRead)
+		api.DELETE("/messages/:id", mc.DeleteMessage)
     }
 }
