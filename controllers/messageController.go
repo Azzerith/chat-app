@@ -12,8 +12,6 @@ import (
     "chat-app/models"
 )
 
-// MessageController handles chat messages & their read status
-
 type MessageController struct {
     DB *gorm.DB
 }
@@ -22,15 +20,12 @@ func NewMessageController(db *gorm.DB) *MessageController {
     return &MessageController{DB: db}
 }
 
-// ===== Request structs =====
-
 type sendMsgInput struct {
     Content    string  `json:"content" binding:"required"`
     GroupID    *string `json:"group_id"`    // optional
     ReceiverID *string `json:"receiver_id"` // optional
 }
 
-// ===== Handlers =====
 
 // SendMessage (POST /api/messages)
 // Supports: 1) pesan ke grup (isi group_id) 2) pesan 1‑on‑1 (isi receiver_id)
