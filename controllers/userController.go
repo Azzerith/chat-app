@@ -22,11 +22,9 @@ type UserController struct {
     SecretKey []byte
 }
 
-// NewUserController returns a controller with DB and secret key initialised.
 func NewUserController(db *gorm.DB) *UserController {
     secret := []byte(os.Getenv("JWT_SECRET"))
     if len(secret) == 0 {
-        // fallback for development; make sure JWT_SECRET env var is set in production
         secret = []byte("change-me-please")
     }
     return &UserController{DB: db, SecretKey: secret}
