@@ -86,7 +86,6 @@ func (uc *UserController) parseToken(tokenStr string) (*jwtCustomClaims, error) 
     return claims, nil
 }
 
-// JWTAuthMiddleware validates token and stores claims in the context
 func (uc *UserController) JWTAuthMiddleware() gin.HandlerFunc {
     return func(c *gin.Context) {
         authHeader := c.GetHeader("Authorization")
@@ -104,7 +103,7 @@ func (uc *UserController) JWTAuthMiddleware() gin.HandlerFunc {
             c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
             return
         }
-        // attach claims to context for downstream handlers
+
         c.Set("userID", claims.UserID)
         c.Set("username", claims.Username)
         c.Next()
